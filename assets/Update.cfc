@@ -4,11 +4,11 @@
 * Copyright 2012 by Luis Majano and Ortus Solutions, Corp
 * www.ortussolutions.com
 * ---
-* Updater for 3.0.0 Beta Final
+* Updater for 3.0.0 RC
 * 
 * DB Structure Changes Comment Below
 * 
-* Remove Interface for conversion from 2.1 to 3.0
+* Remove Interface for conversion from 2.1 to 3.0.0 RC
 *
 * ---
 * Start Commit Hash: 762aede3a97eb00519e7f171ac4c3c6d6924daca
@@ -33,6 +33,7 @@ component {
 	* Constructor
 	*/
 	function init(){
+		setting requestTimeout="999999";
 		return this;
 	}
 
@@ -78,24 +79,13 @@ component {
 					oRule.setPermissions( replaceNoCase( oRule.getPermissions(), "LAYOUT_ADMIN", "THEME_ADMIN", "all" ) );
 					oRule.setSecureList( replaceNoCase( oRule.getSecureList(), "layouts", "themes", "all" ) );
 				}
-				securityRuleService.save( entity=oRule, transactional=false );
+				securityRuleService.save( entity=oRule );
 			}
 
-			/****************************** UPDATE SETTINGS + PERMISSIONS ******************************/
-
-			// Update new settings
-			updateSettings();
-			// Update Permissions
-			updatePermissions();
-			// Update Roles with new permissions
-			updateAdmin();
-			updateEditor();
-
-			log.info("Finalized #version# patching");
+			log.info( "Finalized #version# preInstallation patching" );
 		}
 		catch(Any e){
-			ORMClearSession();
-			log.error("Error doing #version# patch preInstallation. #e.message# #e.detail# #e.stacktrace#", e);
+			log.error( "Error doing #version# patch preInstallation. #e.message# #e.detail# #e.stacktrace#", e );
 			rethrow;
 		}
 
@@ -106,15 +96,21 @@ component {
 	*/
 	function postInstallation(){
 		try{
-			// Verify if less than 2.1.0 with message
-			if( !isValidInstall() ){ return; }
-
 			// Make changes on disk take effect
-			ORMREload();
-		}
-		catch(Any e){
-			ORMClearSession();
-			log.error("Error doing #version# patch postInstallation. #e.message# #e.detail#", e);
+			ORMReload();
+			// Update new timestamp fields
+			updateTimestampFields();
+			// Update new settings
+			updateSettings();
+			// Update Permissions
+			updatePermissions();
+			// Update Roles with new permissions
+			updateAdmin();
+			updateEditor();
+			// Update CK Editor
+			updateCKEditorPlugins();
+		} catch( Any e ) {
+			log.error( "Error doing #version# patch postInstallation. #e.message# #e.detail#", e );
 			rethrow;
 		}
 	}
@@ -122,7 +118,7 @@ component {
 	/************************************** PRIVATE *********************************************/
 
 	private function isValidInstall(){
-		// Verify if less than 1.6.0 with message
+		// Verify if less than 2.1.0 with message
 		if( replace( currentVersion, ".", "", "all" )  LT 210 ){
 			log.info( "Cannot patch this installation until you upgrade to 2.1.0 first. You can find all of our patches here available for download: http://www.ortussolutions.com/products/contentbox. Then apply this patch." );
 			return false;
@@ -186,7 +182,7 @@ component {
 		if( !isNull( perm ) ){
 			perm.setPermission( "THEME_ADMIN" );
 			perm.setDescription( "Ability to manage themes, default is view only" );
-			permissionService.save( entity=perm, transactional=false );
+			permissionService.save( entity=perm );
 			log.info( "LAYOUT_ADMIN permission found, renamed to THEME_ADMIN");
 		} else {
 			// Create it as a new permission only if THEME_ADMIN does not exist
@@ -213,24 +209,31 @@ component {
 		var oldLayoutSetting = settingService.findWhere( { name="cb_site_layout" } );
 		if( !isNull( oldLayoutSetting ) ){
 			oldLayoutSetting.setName( "cb_site_theme" );
-			settingService.save( entity=oldLayoutSetting, transactional=false );
+			settingService.save( entity=oldLayoutSetting );
 		}
 		// Update Search setting
 		var oSearchSetting = settingService.findWhere( { name="cb_search_adapter" } );
 		oSearchSetting.setValue( "contentbox.models.search.DBSearch" );
-		settingService.save( entity=oSearchSetting, transactional=false );
+		settingService.save( entity=oSearchSetting );
+
+		// Update all settings to core
+		var oSettings = settingService.getAll();
+		for( var thisSetting in oSettings ){
+			if( reFindNoCase( "^cb_", thisSetting.getName() ) ){
+				thisSetting.setIsCore( true );
+				settingService.save( entity=thisSetting );
+			}
+		}
 
 		// Add new settings
 		addSetting( "cb_site_settings_cache", "Template" );
 	}
 
-	/************************************** DB MIGRATION OPERATIONS *********************************************/
-
 	private function addPermission( permission, description ){
 		var props = { permission=arguments.permission, description=arguments.description };
 		// only add if not found
 		if( isNull( permissionService.findWhere( { permission=props.permission } ) ) ){
-			permissionService.save( entity=permissionService.new( properties=props ), transactional=false );
+			permissionService.save( entity=permissionService.new( properties=props ) );
 			log.info( "Added #arguments.permission# permission" );
 		} else {
 			log.info( "Skipped #arguments.permission# permission addition as it was already in system" );
@@ -243,7 +246,7 @@ component {
 			setting = settingService.new();
 			setting.setValue( trim( arguments.value ) );
 			setting.setName( arguments.name );
-			settingService.save( entity=setting, transactional=false );
+			settingService.save( entity=setting );
 			log.info( "Added #arguments.name# setting" );
 		} else {
 			log.info( "Skipped #arguments.name# setting, already there" );
@@ -251,6 +254,63 @@ component {
 
 		return this;
 	}
+
+	private function updateTimestampFields(){
+		
+		var tables = [
+			"cb_author",
+			"cb_category",
+			"cb_comment",
+			"cb_content",
+			"cb_contentVersion",
+			"cb_customField",
+			"cb_loginAttempts",
+			"cb_menu",
+			"cb_menuItem",
+			"cb_module",
+			"cb_permission",
+			"cb_role",
+			"cb_securityRule",
+			"cb_setting",
+			"cb_stats",
+			"cb_subscribers",
+			"cb_subscriptions"
+		];
+
+		for( var thisTable in tables ){
+			var q = new Query( sql = "update #thisTable# set modifiedDate = :modifiedDate" );
+			q.addParam( name="modifiedDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
+			var results = q.execute().getResult();
+			log.info( "Update #thisTable# modified date", results );	
+		}
+		
+		// Creation tables now
+		tables = [
+			"cb_category",
+			"cb_customField",
+			"cb_menu",
+			"cb_menuItem",
+			"cb_module",
+			"cb_permission",
+			"cb_role",
+			"cb_securityRule",
+			"cb_setting",
+			"cb_stats",
+			"cb_subscribers"
+		];
+		for( var thisTable in tables ){
+			var q = new Query( sql = "update #thisTable# set createdDate = :createdDate" );
+			q.addParam( name="createdDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
+			var results = q.execute().getResult();
+			log.info( "Update #thisTable# created date", results );	
+		}
+			
+	}
+
+	private function updateCKEditorPlugins(){
+	}
+
+	/************************************** DB MIGRATION OPERATIONS *********************************************/
 
 	// Add a new column: type=[varchar, boolean, text]
 	private function addColumn(required table, required column, required type, required limit, boolean nullable=false, defaultValue){
@@ -392,23 +452,28 @@ component {
 
 	// get Columns
 	private function getTableColumns(required table){
-		if( structkeyexists( server, "railo") ){
-			return new RailoDBInfo().getTableColumns(datasource=getDatasource(), table=arguments.table);
+		if( structkeyexists( server, "lucee" ) || structKeyExists( server, "railo" ) ){
+			return new DBInfo().getTableColumns( datasource=getDatasource(), table=arguments.table );
 		}
-		return new dbinfo(datasource=getDatasource(), table=arguments.table).columns();
+		return new dbinfo( datasource=getDatasource(), table=arguments.table ).columns();
 	}
 
 	// Get the database type
 	private function getDatabaseType(){
-		if( structkeyexists( server, "railo") ){
-			return new RailoDBInfo().getDatabaseType(datasource=getDatasource()).database_productName;
+		if( structkeyexists( server, "lucee" ) || structKeyExists( server, "railo" ) ){
+			return new DBInfo().getDatabaseType(datasource=getDatasource()).database_productName;
 		}
 		return new dbinfo(datasource=getDatasource()).version().database_productName;
 	}
 
 	// Get the default datasource
 	private function getDatasource(){
-		return new coldbox.system.orm.hibernate.util.ORMUtilFactory().getORMUtil().getDefaultDatasource();
+		try{
+			return new cborm.models.util.ORMUtilFactory().getORMUtil().getDefaultDatasource();
+		} catch( any e ){
+			return new coldbox.system.orm.hibernate.util.ORMUtilFactory().getORMUtil().getDefaultDatasource();
+		}
+		
 	}
 
 }

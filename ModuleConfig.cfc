@@ -9,14 +9,14 @@ component {
 
 	// Module Properties
 	this.title 				= "CB3 Updater";
-	this.author 				= "Ortus Solutions, Corp";
-	this.webURL 				= "http://www.ortussolutions.com";
+	this.author 			= "Ortus Solutions, Corp";
+	this.webURL 			= "http://www.ortussolutions.com";
 	this.description 		= "This Updater Module helps upgrade from Contentbox 2.1 to 3.0";
-	this.version				= "3.0.0-beta+@build.number@";
+	this.version			= "1.0.0";
 	this.viewParentLookup 	= true;
-	this.layoutParentLookup 	= true;
+	this.layoutParentLookup = true;
 	this.entryPoint			= "CB3Updater";
-	this.modelNamespace 		= "CB3Updater";
+	this.modelNamespace 	= "CB3Updater";
 	this.cfmapping 			= "CB3Updater";
 	this.dependencies 		= [ ];
 
@@ -30,7 +30,7 @@ component {
 
 		// Layout Settings
 		layoutSettings = {
-			defaultLayout = ""
+			defaultLayout = "Updater"
 		};
 
 		// datasources
@@ -63,6 +63,5 @@ component {
 	function onLoad(){
 		
 	}
-
 
 }
