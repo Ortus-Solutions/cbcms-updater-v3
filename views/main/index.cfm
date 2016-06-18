@@ -32,7 +32,13 @@
 coldboxTracer = { class="coldbox.system.logging.appenders.ColdboxTracerAppender" }
 
 // AsyncLoggers
-If you are using any async loggers, remove them.
+// If you are using any async loggers, remove the 'Async' prefix and use the 'async' property instead
+// Below is an example
+logbox.appenders.files={class="coldbox.system.logging.appenders.RollingFileAppender",
+	properties = {
+		filename = "ContentBox", filePath="../logs", async="true"
+	}
+};
 
 // Plugins Location: Remove
 coldbox.pluginsExternalLocation
