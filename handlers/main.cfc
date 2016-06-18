@@ -28,8 +28,15 @@ component{
 	* Event to run after the initial install, and application clear.
 	* This should force the app to reinit, to complete the update.
 	*/
-	function complete( event, rc, prc ){
-		event.setView( "main/complete" );
+	function postProcess( event, rc, prc ){
+		// Setup Variables
+		prc.log 					= createObject( "java", "java.lang.StringBuilder" ).init( "" );
+		prc.moduleInvocationPath	= getSetting( "modules")[ 'cbcms-updater-v3' ].invocationPath;
+		// Build Updater
+		var oUpdater = getInstance( "#prc.moduleInvocationPath#.assets.Update" );
+		// do postInstallation
+		oUpdater.postInstallation( prc.log );
+		event.setView( "main/postProcess" );		
 	}
 
 	/**************************************** PRIVATE ****************************************/

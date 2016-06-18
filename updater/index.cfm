@@ -166,11 +166,9 @@
 	<cfflush>
 	<!--- Activate new app --->
 	<cfhttp url="#form.approot#" result="httpResults">
-	<cfset log.append( httpResults.fileContent )>
-	<!--- Log it --->
-	<pre>#httpResults.fileContent#</pre>
+	<h2>Application started</h2>
 	<hr>
 	<cfflush>
 <h1>Finalized first part of the updater, please wait, relocating to next section of updater</h1>
-<!---<meta http-equiv="refresh" content="1; url=#form.moduleRoot#/updater/postProcess.cfm?modulePath=#urlEncodedFormat( modulePath )#" />--->
+<meta http-equiv="refresh" content="1; url=#appRoot#/CB3Updater/main/postProcess" />
 </cfoutput>
