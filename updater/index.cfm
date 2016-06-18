@@ -156,6 +156,8 @@
 	directoryDelete( "#appPath#/modules/contentbox-filebrowser", true );
 	directoryDelete( "#appPath#/modules/contentbox-security", true );
 	directoryCreate( "#appPath#/modules/contentbox/modules" );
+
+	applicationstop();
 </cfscript>
 
 <cfoutput>
@@ -166,9 +168,9 @@
 	<cfhttp url="#form.approot#" result="httpResults">
 	<cfset log.append( httpResults.fileContent )>
 	<!--- Log it --->
-	<pre>#log.toString()#</pre>
+	<pre>#httpResults.fileContent#</pre>
 	<hr>
 	<cfflush>
 <h1>Finalized first part of the updater, please wait, relocating to next section of updater</h1>
-<meta http-equiv="refresh" content="1; url=#form.moduleRoot#/updater/postProcess.cfm?modulePath=#urlEncodedFormat( modulePath )#" />
+<!---<meta http-equiv="refresh" content="1; url=#form.moduleRoot#/updater/postProcess.cfm?modulePath=#urlEncodedFormat( modulePath )#" />--->
 </cfoutput>
