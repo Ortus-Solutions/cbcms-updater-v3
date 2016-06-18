@@ -213,6 +213,7 @@
 
 	// Compat Shim to startup the ORM
 	directoryCreate( "#appPath#/modules/contentbox/model" );
+	directoryCreate( "#appPath#/modules/contentbox/model/system" );
 	fileCopy( "#appPath#/modules/contentbox/models/system/EventHandler.cfc", "#appPath#/modules/contentbox/model/system/EventHandler.cfc" );
 
 	//Stop App + Clear Caches
