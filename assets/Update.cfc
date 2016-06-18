@@ -99,7 +99,7 @@ component {
 			// Make changes on disk take effect
 			ORMReload();
 			// Update new timestamp fields
-			updateTimestampFields();
+			//updateTimestampFields();
 			// Update new settings
 			updateSettings();
 			// Update Permissions

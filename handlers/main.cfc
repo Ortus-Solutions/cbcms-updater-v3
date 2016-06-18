@@ -32,6 +32,11 @@ component{
 		// Setup Variables
 		prc.log 					= createObject( "java", "java.lang.StringBuilder" ).init( "" );
 		prc.moduleInvocationPath	= getSetting( "modules")[ 'cbcms-updater-v3' ].invocationPath;
+		prc.appPath 				= getSetting( "applicationPath" );
+		
+		// Cleanup
+		directoryDelete( "#appPath#/modules/contentbox/model", true );
+
 		// Build Updater
 		var oUpdater = getInstance( "#prc.moduleInvocationPath#.assets.Update" );
 		// do postInstallation

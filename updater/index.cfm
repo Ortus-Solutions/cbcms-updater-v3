@@ -122,6 +122,60 @@
 		writeOutput( log.toString() );flushit();
 	}
 
+	private function updateTimestampFields( required log ){
+		
+		var tables = [
+			"cb_author",
+			"cb_category",
+			"cb_comment",
+			"cb_content",
+			"cb_contentVersion",
+			"cb_customField",
+			"cb_loginAttempts",
+			"cb_menu",
+			"cb_menuItem",
+			"cb_module",
+			"cb_permission",
+			"cb_role",
+			"cb_securityRule",
+			"cb_setting",
+			"cb_stats",
+			"cb_subscribers",
+			"cb_subscriptions"
+		];
+
+		for( var thisTable in tables ){
+			var q = new Query( sql = "update #thisTable# set modifiedDate = :modifiedDate" );
+			q.addParam( name="modifiedDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
+			var results = q.execute().getResult();
+			arguments.log.info( "Update #thisTable# modified date", results );	
+			writeOutput( log.toString() );flushit();
+		}
+		
+		// Creation tables now
+		tables = [
+			"cb_category",
+			"cb_customField",
+			"cb_menu",
+			"cb_menuItem",
+			"cb_module",
+			"cb_permission",
+			"cb_role",
+			"cb_securityRule",
+			"cb_setting",
+			"cb_stats",
+			"cb_subscribers"
+		];
+		for( var thisTable in tables ){
+			var q = new Query( sql = "update #thisTable# set createdDate = :createdDate" );
+			q.addParam( name="createdDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
+			var results = q.execute().getResult();
+			arguments.log.info( "Update #thisTable# created date", results );	
+			writeOutput( log.toString() );flushit();
+		}
+			
+	}
+
 	// Setup Variables
 	log 		= createObject( "java", "java.lang.StringBuilder" ).init( "" );
 	zipUtil 	= new coldbox.system.core.util.Zip();
@@ -157,18 +211,26 @@
 	directoryDelete( "#appPath#/modules/contentbox-security", true );
 	directoryCreate( "#appPath#/modules/contentbox/modules" );
 
+	// Compat Shim to startup the ORM
+	directoryCreate( "#appPath#/modules/contentbox/model" );
+	fileCopy( "#appPath#/modules/contentbox/models/system/EventHandler.cfc", "#appPath#/modules/contentbox/model/system/EventHandler.cfc" );
+
+	//Stop App + Clear Caches
 	applicationstop();
+	if( structKeyExists( server, "lucee" ) ){
+		pagePoolClear();
+	}
+
+	writeOutput( "<h1>Starting up new ORM files....</h1>" );flushit();
+
+	// Reload ORM, create new stuff
+	ORMReload();
+
+	// Update timestamps to startup the APP, if not, app does not start
+	updateTimestampFields( log );
 </cfscript>
 
 <cfoutput>
-	<hr>
-	<h1>Startup new app...</h1>
-	<cfflush>
-	<!--- Activate new app --->
-	<cfhttp url="#form.approot#" result="httpResults">
-	<h2>Application started</h2>
-	<hr>
-	<cfflush>
 <h1>Finalized first part of the updater, please wait, relocating to next section of updater</h1>
 <meta http-equiv="refresh" content="1; url=#appRoot#/CB3Updater/main/postProcess" />
 </cfoutput>
