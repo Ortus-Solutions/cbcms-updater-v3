@@ -148,8 +148,6 @@
 			var q = new Query( sql = "update #thisTable# set modifiedDate = :modifiedDate" );
 			q.addParam( name="modifiedDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
 			var results = q.execute().getResult();
-			arguments.log.append( "Update #thisTable# modified date" );	
-			writeOutput( log.toString() );flushit();
 		}
 		
 		// Creation tables now
@@ -170,8 +168,6 @@
 			var q = new Query( sql = "update #thisTable# set createdDate = :createdDate" );
 			q.addParam( name="createdDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
 			var results = q.execute().getResult();
-			arguments.log.append( "Update #thisTable# created date" );	
-			writeOutput( log.toString() );flushit();
 		}
 			
 	}
