@@ -35,7 +35,7 @@ component{
 		prc.appPath 				= getSetting( "applicationPath" );
 		
 		// Cleanup
-		directoryDelete( "#appPath#/modules/contentbox/model", true );
+		directoryDelete( "#prc.appPath#/modules/contentbox/model", true );
 
 		// Build Updater
 		var oUpdater = getInstance( "#prc.moduleInvocationPath#.assets.Update" );
