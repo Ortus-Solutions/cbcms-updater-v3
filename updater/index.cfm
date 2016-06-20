@@ -184,6 +184,8 @@
 
 	// Build Updater
 	oUpdater = application.wirebox.getInstance( "#modulePath#.assets.Update" );
+	// Cleanup JavaLoader
+	structDelete( server, application.cbController.getPlugin( "Javaloader" ).getStaticIDKey() );
 
 	// do preInstallation
 	oUpdater.preInstallation( log );
@@ -199,6 +201,7 @@
 	
 	// Do deletes first
 	processRemovals( expandPath( '../assets/deletes.txt' ), log );
+	directoryDelete( "#appPath#/coldbox", true );
 	
 	// Do updates second
 	processUpdates( expandPath( '../assets/patch.zip' ), log );
@@ -241,5 +244,5 @@
 
 <cfoutput>
 <h1>Finalized first part of the updater, please wait, relocating to next section of updater</h1>
-<meta http-equiv="refresh" content="1; url=#appRoot#/CB3Updater/main/postProcess" />
+<meta http-equiv="refresh" content="1; url=#appRoot#CB3Updater/main/postProcess" />
 </cfoutput>
