@@ -148,7 +148,7 @@
 			var q = new Query( sql = "update #thisTable# set modifiedDate = :modifiedDate" );
 			q.addParam( name="modifiedDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
 			var results = q.execute().getResult();
-			arguments.log.info( "Update #thisTable# modified date", results );	
+			arguments.log.append( "Update #thisTable# modified date", results );	
 			writeOutput( log.toString() );flushit();
 		}
 		
@@ -170,7 +170,7 @@
 			var q = new Query( sql = "update #thisTable# set createdDate = :createdDate" );
 			q.addParam( name="createdDate", value ="#createODBCDateTime( now() )#", cfsqltype="CF_SQL_TIMESTAMP" );
 			var results = q.execute().getResult();
-			arguments.log.info( "Update #thisTable# created date", results );	
+			arguments.log.append( "Update #thisTable# created date", results );	
 			writeOutput( log.toString() );flushit();
 		}
 			
@@ -226,7 +226,7 @@
 
 	// Creation of new cborm mapping, to do hard core startup
 	if( structKeyExists( server, "lucee" ) ){
-		mappingHelper = new LuceeMapingHelper();
+		mappingHelper = new LuceeMappingHelper();
 	} else {
 		mappingHelper = new CFMappingHelper();
 	}
