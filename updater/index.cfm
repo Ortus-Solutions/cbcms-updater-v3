@@ -224,6 +224,14 @@
 
 	writeOutput( "<h1>Starting up new ORM files....</h1>" );flushit();
 
+	// Creation of new cborm mapping, to do hard core startup
+	if( structKeyExists( server, "lucee" ) ){
+		mappingHelper = new LuceeMapingHelper();
+	} else {
+		mappingHelper = new CFMappingHelper();
+	}
+	mappingHelper.addMapping( "cborm", "#appPath#/coldbox/system/modules/cborm" );
+
 	// Reload ORM, create new stuff
 	ORMReload();
 
