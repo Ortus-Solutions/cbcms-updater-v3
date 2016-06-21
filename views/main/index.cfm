@@ -14,22 +14,28 @@
 	<input type="hidden" name="appRoot" 	value="#event.buildLink( '' )#">
 	
 	<p class="alert alert-danger">
-		ContentBox 3 is a major upgrade and it will require some input from you in order to seamlessly upgrade your ContentBox 2.X installation.  Please follow the instructions below.
+		ContentBox 3 is a major upgrade and it will require some manual input from you in order to seamlessly upgrade your ContentBox 2.X installation.  Please follow the instructions below.
 	</p>
 
 	<section id="step1">
 		<h1>Step1: ColdBox 3 -> 4 Updates</h1>
 		<p>
-			ContentBox 3 is now based on ColdBox 4 and will require upgrading your core framework code as well.  There are many incompatibilities between ColdBox 3 and ColdBox 4.  You can read more about them in our <a href="https://coldbox.ortusbooks.com/content/introduction/upgrading_to_coldbox_400.html" target="_blank">compatibility guide</a>.  Below are the major updates you need to do on vanilla ContentBox installations.  If you have more code or modules around the application, you will have to upgrade those modules and code as well.
+			ContentBox 3 is now based on ColdBox 4 and will require upgrading your core framework code as well.  There are many incompatibilities between ColdBox 3 and ColdBox 4.  You can read more about them in our <a href="https://coldbox.ortusbooks.com/content/introduction/upgrading_to_coldbox_400.html" target="_blank">compatibility guide</a>.  Below are the major updates you need to do on a vanilla ContentBox installation that should be enough to upgrade you.  
 		</p>
 
+		<div class="alert alert-warning">
+		If you have more code or modules built around a vanilla ContentBox application, you will have to upgrade those modules and code as well.
+		</div>
+
 		<p>
-		Open the <code>config/ColdBox.cfc</code> and remove/rename the following deprecated settings. Once you are done, click on the <kbd>Continue</kbd> button.
+		Open the <code>config/ColdBox.cfc</code> and remove/rename the following deprecated settings. Once you are done, save the file and click on the <kbd>Continue</kbd> button.
 		</p>
 
 <pre>
-// ColdBox Tracer: Remove
+// ColdBox Tracer Appender Remove, or change it to the ConsoleAppender
 coldboxTracer = { class="coldbox.system.logging.appenders.ColdboxTracerAppender" }
+// Change it to this
+ConsoleAppender = { class="coldbox.system.logging.appenders.ConsoleAppender" }
 
 // AsyncLoggers
 // If you are using any async loggers, remove the 'Async' prefix and use the 'async' property instead
@@ -40,11 +46,11 @@ logbox.appenders.files={class="coldbox.system.logging.appenders.RollingFileAppen
 	}
 };
 
-// Plugins Location: Remove
+// Plugins Location: Remove setting
 coldbox.pluginsExternalLocation
 
 // Application helper setting - rename it to: coldbox.applicationHelper
-coldbox.UDFLibraryFile
+coldbox.UDFLibraryFile -> coldbox.applicationHelper
 
 // Remove debugging settings
 coldbox.debugMode;
