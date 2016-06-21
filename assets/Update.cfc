@@ -61,9 +61,12 @@ component {
 
 			/****************************** RENAME LAYOUTS TO THEMES ******************************/
 
+			// Remove Old theme
+			directoryDelete( contentBoxPath & "/layouts/default", true );
+
 			if( !directoryExists( contentBoxPath & "/themes" ) && directoryExists( contentBoxPath & "/layouts" ) ){
-				directoryRename( contentBoxPath & "/layouts" , contentBoxPath & "/themes" );	
-			}			
+				directoryRename( contentBoxPath & "/layouts" , contentBoxPath & "/themes" );
+			}
 
 			/****************************** RENAME MODULES ******************************/
 			
