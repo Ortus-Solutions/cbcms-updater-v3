@@ -75,8 +75,13 @@
 			var files = listToArray( removalText, chr(10) );
 			for( var thisFile in files ){
 				if( fileExists( expandPath("/#thisFile#" ) ) ){
-					fileDelete( expandPath("/#thisFile#" ) );
-					arguments.log.append( "Removed: #thisFile#<br/>" );
+					try{
+						fileDelete( expandPath("/#thisFile#" ) );
+						arguments.log.append( "Removed: #thisFile#<br/>" );
+					} catch( Any e ){
+						arguments.log.append( "<div class='alert alert-danger'>File #thisFile# cannot be removed. Maybe a windows lock.  You will need to remove the file manually by stopping the engine first.</div>" );
+					}
+					
 				} else {
 					arguments.log.append( "File Not Found, so not removed: #thisFile#<br/>" );
 				}
@@ -240,5 +245,8 @@
 
 <cfoutput>
 <h1>Finalized first part of the updater, please wait, relocating to next section of updater</h1>
-<meta http-equiv="refresh" content="1; url=#appRoot#CB3Updater/main/postProcess" />
+<div class="alert alert-warning">
+Please review the log files above.  If there are any warnings about not being able to delete files, please revise them and delete them manually.  Unfortunately, Windows operating systems hold native locks on jar files and those need the engine to be stopped, file deleted and engine restarted again.  If you do that, then return here and click on the <strong>Continue</strong> button below.
+</div>
+<a href="#appRoot#CB3Updater/main/postProcess" class="btn btn-lg btn-danger">Continue Updater</a>
 </cfoutput>
