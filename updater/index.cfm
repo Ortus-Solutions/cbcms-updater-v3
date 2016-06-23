@@ -202,7 +202,7 @@
 	
 	// Do deletes first
 	processRemovals( expandPath( '../assets/deletes.txt' ), log );
-	directoryDelete( "#appPath#/coldbox", true );
+	directoryRename( "#appPath#/coldbox", "#appPath#/coldbox_backup" );
 	
 	// Do updates second
 	processUpdates( expandPath( '../assets/patch.zip' ), log );
