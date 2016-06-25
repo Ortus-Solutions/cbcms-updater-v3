@@ -55,12 +55,6 @@ coldbox.UDFLibraryFile -> coldbox.applicationHelper
 // Remove debugging settings
 coldbox.debugMode;
 coldbox.debugPassword;
-
-// ADD Messagebox Settings
-messagebox = {
-	styleOverride 	= true,
-	template 		= "/contentbox/models/ui/templates/messagebox.cfm"
-};
 </pre>
 	
 	<button type="button" class="btn btn-lg btn-danger" onclick="step2()">Continue</button>
