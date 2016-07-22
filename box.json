@@ -1,7 +1,7 @@
 {
     "name":"ContentBox 2 to 3 Updater Module",
-    "version":"1.0.0",
-    "location" : "Ortus-Solutions/cbcms-updater-v3#v1.0.0",
+    "version":"1.0.1",
+    "location":"Ortus-Solutions/cbcms-updater-v3#v1.0.1",
     "author":"Ortus Solutions <info@ortussolutions.com>",
     "slug":"cbcms-updater-v3",
     "type":"modules",
