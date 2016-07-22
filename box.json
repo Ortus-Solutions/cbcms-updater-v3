@@ -4,7 +4,7 @@
     "location" : "https://github.com/Ortus-Solutions/cbcms-updater-v3/archive/master.zip",
     "author":"Ortus Solutions <info@ortussolutions.com>",
     "slug":"cbcms-updater-v3",
-    "type":"cms",
+    "type":"modules",
     "keywords":"cms,content management,modular cms",
     "homepage":"https://github.com/Ortus-Solutions/cbcms-updater-v3",
     "documentation":"http://contentbox.ortusbooks.com/content/introduction/upgrading.html",
