@@ -13,5 +13,9 @@
         "url":"https://github.com/Ortus-Solutions/cbcms-updater-v3"
     },
     "bugs":"https://github.com/Ortus-Solutions/cbcms-updater-v3/issues",
-    "shortDescription":"This module is used to upgrade ContentBox 2 sites to ContentBox 3 sites."
+    "shortDescription":"This module is used to upgrade ContentBox 2 sites to ContentBox 3 sites.",
+    "scripts" : {
+	   "preVersion" : "package set location='Ortus-Solutions/cbcms-updater-v3#`package version`'",
+	   "postPublish" : "!git push --follow-tags"
+  }
 }
