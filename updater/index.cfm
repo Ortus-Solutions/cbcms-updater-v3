@@ -72,7 +72,7 @@
 
 		// if there are files, then remove, else continue
 		if( len( removalText ) ){
-			var files = listToArray( removalText, chr(10) );
+			var files = listToArray( removalText, chr(10)&chr(13) );
 			for( var thisFile in files ){
 				if( fileExists( expandPath("/#thisFile#" ) ) ){
 					try{
@@ -92,7 +92,7 @@
 
 		// remove deletes.txt file
 		//fileDelete( arguments.path );
-		writeOutput( log.toString() );flushit();
+		writeOutput( log.toString() ); log.setLength(0); flushit();
 	}
 	
 	/**
@@ -124,7 +124,7 @@
 
 		// remove patch
 		//fileDelete( arguments.path );
-		writeOutput( log.toString() );flushit();
+		writeOutput( log.toString() ); log.setLength(0); flushit();
 	}
 
 	private function updateTimestampFields( required log ){
@@ -192,17 +192,23 @@
 	oUpdater.preInstallation( log );
 	log.append( "Update.cfc - called preInstallation() method.<br/>" );
 
-	writeOutput( log.toString() );flushit();
+	writeOutput( log.toString() ); log.setLength(0); flushit();
 
 	// Backup old Application.cfc and Create new Application.cfc from Update Form
 	cleanUpApplicationCFC( form.newCFC );
-	log.append( "Application.cfc backedup and updated.<br/>" );
+	log.append( "Application.cfc backed up and updated.<br/>" );
 	
-	writeOutput( log.toString() );flushit();
+	writeOutput( log.toString() ); log.setLength(0); flushit();
 	
 	// Do deletes first
 	processRemovals( expandPath( '../assets/deletes.txt' ), log );
-	directoryRename( "#appPath#/coldbox", "#appPath#/coldbox_backup" );
+	
+	try{
+		directoryRename( "#appPath#/coldbox", "#appPath#/coldbox_backup" );
+	} catch( Any e ){
+		log.append( "<div class='alert alert-danger'>Directory #appPath#/coldbox cannot be renamed. Maybe a windows lock.  You will need to remove the file manually by stopping the engine first.</div>" );
+	}
+	writeOutput( log.toString() ); log.setLength(0); flushit();
 	
 	// Do updates second
 	processUpdates( expandPath( '../assets/patch.zip' ), log );
